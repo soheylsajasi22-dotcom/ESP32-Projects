@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>پنل شیشه‌بالابر پراید</title>
+
+<style>
+:root{--bg:#eef0f3;--s1:#fff;--s2:#f3f5f8;--ink:#14181d;--mut:#69717c;--line:#dfe3e8;--acc:#e08a00;--accInk:#1a1200;--ok:#0f9e7e;--bad:#d93a2f;--g1:#bfe0ee;--g2:#7fb6d0;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0d1014;--s1:#161a20;--s2:#1e242c;--ink:#edeef0;--mut:#8b939e;--line:#262d36;--acc:#ffb000;--ok:#3dd6b0;--bad:#ff5a4f;--g1:#3a6d86;--g2:#1f4459}}
+:root[data-theme="dark"]{--bg:#0d1014;--s1:#161a20;--s2:#1e242c;--ink:#edeef0;--mut:#8b939e;--line:#262d36;--acc:#ffb000;--ok:#3dd6b0;--bad:#ff5a4f;--g1:#3a6d86;--g2:#1f4459}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 15px/1.6 Vazirmatn,Tahoma,sans-serif;max-width:560px;margin-inline:auto;padding:0 14px 96px}
+header{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;display:flex;justify-content:space-between;align-items:center;padding:12px 0;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(10px)}
+h1{font-size:20px;font-weight:800;margin:0;line-height:1.2}
+h1 small{display:block;font-size:12px;font-weight:400;color:var(--mut)}
+h2{font-size:13px;font-weight:600;color:var(--mut);margin:0 0 10px}
+.chip{display:inline-flex;align-items:center;gap:6px;font-size:12px;padding:4px 11px;border-radius:99px;background:var(--s1);border:1px solid var(--line)}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--ok)}
+.card{background:var(--s1);border:1px solid var(--line);border-radius:22px;padding:16px;margin-bottom:12px}
+.view{display:none}.view.on{display:block}
+button{font:inherit;color:var(--ink);cursor:pointer;border:0;background:var(--s2);border-radius:14px;padding:10px 14px;touch-action:manipulation}
+button:focus-visible,input:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
+.scenes{display:flex;gap:8px;overflow-x:auto;padding-bottom:12px}
+.scenes button{white-space:nowrap;background:var(--s1);border:1px solid var(--line);border-radius:99px}
+.scenes button:active{background:var(--acc);color:var(--accInk)}
+.wins{display:grid;grid-template-columns:1fr;gap:12px;margin-bottom:12px}
+.win{background:var(--s1);border:1px solid var(--line);border-radius:22px;padding:14px;display:flex;flex-direction:column;align-items:center;gap:10px}
+.win header{all:unset;display:flex;width:100%;justify-content:space-between;align-items:center;font-weight:600}
+.win header em{font-style:normal;font-size:11px;color:var(--mut)}
+.glass{position:relative;width:100%;height:auto;padding:12px 12px 46px;border-radius:22px 22px 28px 28px;background:var(--s2);overflow:hidden;touch-action:none;cursor:ns-resize;border:1px solid var(--line)}.frame{position:relative;aspect-ratio:2.13;--sh:polygon(0% 100%,0% 87%,1.5% 76%,6.5% 66.5%,13.5% 56%,24.5% 40%,36.5% 23.5%,50% 7.5%,60% 1.5%,73.5% .3%,99.4% 0%,92.7% 97.5%)}.frame>*{position:absolute;inset:0}.rim{background:var(--mut);opacity:.55;clip-path:var(--sh)}.pane{background:var(--bg);clip-path:var(--sh);transform:scale(.975)}.glass::after{content:'';position:absolute;bottom:16px;right:14%;width:46px;height:12px;border-radius:6px;background:var(--line)}.win:nth-child(2) .glass::after{right:auto;left:14%}.win:nth-child(2) .frame{transform:scaleX(-1)}
+.glass i{position:absolute;inset:auto 0 0 0;background:linear-gradient(160deg,var(--g1),var(--g2));border-top:3px solid var(--acc);transition:height .1s linear}
+.glass b{position:absolute;inset:auto 0 10px;text-align:center;font-size:24px;font-weight:800}
+.stat{font-size:12px;color:var(--mut);min-height:20px}
+.pad{display:flex;gap:8px;width:100%}
+.pad button{flex:1;font-size:18px;padding:12px 0}
+.pad button:active{background:var(--acc);color:var(--accInk)}
+.mini{font-size:12px;padding:6px 10px;width:100%}
+.row{display:flex;justify-content:space-between;align-items:center;padding:11px 0;border-bottom:1px solid var(--line)}
+.row:last-child{border:0}
+.row small{display:block;color:var(--mut);font-size:12px}
+.sw{appearance:none;width:46px;height:28px;border-radius:99px;background:var(--s2);border:1px solid var(--line);position:relative;cursor:pointer;flex:none;transition:background .15s}
+.sw::after{content:"";position:absolute;top:3px;inset-inline-start:3px;width:20px;height:20px;border-radius:50%;background:var(--mut);transition:transform .15s,background .15s}
+.sw:checked{background:var(--acc)}
+.sw:checked::after{background:#fff;transform:translateX(-18px)}
+.gauge{display:flex;align-items:center;gap:14px}
+.gauge svg{width:132px;height:132px;flex:none}
+.gauge .n{direction:ltr;font-size:26px;font-weight:800;line-height:1}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;text-align:center;flex:1}
+.grid3 div{background:var(--s2);border-radius:14px;padding:8px 2px}
+.grid3 b{display:block;direction:ltr;font-size:17px}
+.grid3 small{color:var(--mut);font-size:11px}
+canvas{width:100%;height:110px;display:block;margin-top:10px}
+.btns{display:flex;gap:8px;margin-top:10px}
+.btns button{flex:1;font-size:13px}
+.warn{color:var(--bad)}
+.bars{display:flex;align-items:flex-end;gap:5px;height:56px}
+.bars i{flex:1;background:var(--s2);border-radius:5px 5px 2px 2px;border-top:3px solid var(--ok)}
+.bars i.hi{border-color:var(--bad)}
+.hl{margin:0 0 4px;font-size:13px}
+input[type=range]{width:100%;accent-color:var(--acc);margin:6px 0 2px}
+.seg{display:flex;background:var(--s2);border-radius:14px;padding:3px;gap:3px}
+.seg button{flex:1;background:none;padding:8px}
+.seg button[aria-pressed=true]{background:var(--acc);color:var(--accInk);font-weight:600}
+.bar{height:8px;background:var(--s2);border-radius:9px;overflow:hidden;margin-top:10px}
+.bar i{display:block;height:100%;width:0;background:var(--acc)}
+#log{list-style:none;margin:0;padding:0;font-size:13px}
+#log li{padding:7px 0;border-bottom:1px solid var(--line);display:flex;gap:10px}
+#log time{color:var(--mut);flex:none;direction:ltr;font-size:12px}
+#log .w{color:var(--bad)}
+nav{position:fixed;inset-inline:0;bottom:0;display:flex;justify-content:center;padding:8px 14px calc(8px + env(safe-area-inset-bottom,0px));pointer-events:none}
+nav div{pointer-events:auto;display:flex;width:100%;max-width:532px;background:var(--s1);border:1px solid var(--line);border-radius:22px;padding:5px;gap:4px;box-shadow:0 8px 30px rgba(0,0,0,.18)}
+nav button{flex:1;background:none;font-size:13px;padding:10px 0;border-radius:17px;color:var(--mut)}
+nav button[aria-current=page]{background:var(--acc);color:var(--accInk);font-weight:600}
+#toast{position:fixed;inset-inline:16px;bottom:88px;margin-inline:auto;max-width:420px;background:var(--ink);color:var(--bg);border-radius:14px;padding:10px 14px;font-size:13px;opacity:0;transform:translateY(8px);transition:.2s;pointer-events:none;z-index:9;text-align:center}
+#toast.on{opacity:1;transform:none}
+nav button{font-size:12.5px}
+select{font:inherit;background:var(--s2);color:var(--ink);border:0;border-radius:12px;padding:8px 10px}
+input[type=color]{width:46px;height:34px;border:0;border-radius:10px;background:var(--s2);padding:2px;cursor:pointer}
+.sl{display:flex;justify-content:space-between;font-size:13px;margin-top:10px}
+.lc .seg{margin-top:12px}.lc .seg button{padding:8px 2px;font-size:13px}
+#car{display:block;width:100%;max-width:250px;height:auto;margin:0 auto 6px}.noinst .ctl{opacity:.35;pointer-events:none}
+#car .z,#side .z{stroke:var(--line);stroke-width:1;transition:fill .05s}#side{display:none;width:100%;max-width:380px;height:auto;margin:0 auto 6px}
+.rn{font-size:12px;color:var(--bad);min-height:18px;margin:6px 0 0}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+
+/* ===== PRO DASHBOARD UI ===== */
+:root{
+ --bg:#070a0f;--s1:#10151d;--s2:#171e28;--ink:#f4f7fb;--mut:#8793a3;
+ --line:#25303d;--acc:#ffad19;--accInk:#171000;--ok:#20d6a2;--bad:#ff5d65;
+ --cyan:#3fc7ff;--glass:#0d141d;
+}
+:root[data-theme="light"]{
+ --bg:#eef2f6;--s1:#ffffff;--s2:#f4f6f9;--ink:#10151c;--mut:#697584;
+ --line:#dce3ea;--acc:#e18b00;--accInk:#171000;--ok:#0e9e7d;--bad:#d93640;
+ --cyan:#087fb0;--glass:#edf3f8;
+}
+body{max-width:720px;padding:0 12px 108px;background:
+ radial-gradient(circle at 50% -15%,rgba(255,173,25,.13),transparent 34%),var(--bg)}
+header{padding:10px 2px 12px;background:color-mix(in srgb,var(--bg) 78%,transparent);border-bottom:1px solid color-mix(in srgb,var(--line) 55%,transparent)}
+h1{font-size:19px;letter-spacing:-.2px}
+h1 small{font-size:11px;margin-top:2px}
+.card,.win{border-radius:20px;box-shadow:0 10px 30px rgba(0,0,0,.08)}
+.scenes{padding:2px 0 10px}
+.scenes button{font-weight:600}
+.win{padding:12px;background:linear-gradient(145deg,var(--s1),color-mix(in srgb,var(--s1) 75%,var(--s2)))}
+.glass{background:linear-gradient(180deg,var(--glass),var(--s2));border-radius:20px}
+.pad button{height:50px;font-size:21px;font-weight:800}
+.stat{font-size:11px}
+.gauge{background:linear-gradient(145deg,var(--s1),var(--s2));border-radius:18px;padding:10px}
+nav div{backdrop-filter:blur(18px);box-shadow:0 12px 40px rgba(0,0,0,.28)}
+nav button{font-weight:600}
+.chip{font-weight:700}
+.dot{box-shadow:0 0 0 3px color-mix(in srgb,var(--ok) 18%,transparent)}
+#quick-status{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:0 0 12px}
+.qs{background:var(--s1);border:1px solid var(--line);border-radius:16px;padding:10px;text-align:center}
+.qs b{display:block;font-size:15px;direction:ltr}
+.qs small{color:var(--mut);font-size:10px}
+.hero{
+ background:linear-gradient(135deg,color-mix(in srgb,var(--s1) 92%,var(--acc)),var(--s1));
+ border:1px solid var(--line);border-radius:22px;padding:15px;margin-bottom:12px;
+}
+.hero-title{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.hero-title strong{font-size:17px}
+.hero-sub{color:var(--mut);font-size:11px;margin-top:3px}
+.hero-actions{display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px;margin-top:13px}
+.hero-actions button{font-size:12px;font-weight:700}
+#panic{
+ background:color-mix(in srgb,var(--bad) 14%,var(--s1));color:var(--bad);
+ border:1px solid color-mix(in srgb,var(--bad) 35%,var(--line))
+}
+@media(min-width:600px){.wins{grid-template-columns:1fr 1fr}.win:nth-child(1){grid-column:1}.win:nth-child(2){grid-column:2}}
+
+
+/* ===== ESP32-S3 PRO CUSTOMIZATION ===== */
+:root{
+ --neon:#ffad19;
+ --wall:linear-gradient(145deg,#080b10 0%,#101721 52%,#17100a 100%);
+ --neon2:color-mix(in srgb,var(--neon) 38%,transparent);
+}
+body{
+ background:var(--wall);
+ background-attachment:fixed;
+}
+body::before{
+ content:"";position:fixed;inset:0;pointer-events:none;z-index:-1;
+ background:
+ radial-gradient(circle at 15% 10%,var(--neon2),transparent 25%),
+ radial-gradient(circle at 85% 80%,color-mix(in srgb,var(--neon) 12%,transparent),transparent 30%);
+}
+.card,.win,.hero,.qs{
+ box-shadow:0 0 0 1px color-mix(in srgb,var(--neon) 8%,var(--line)),
+            0 12px 34px rgba(0,0,0,.18);
+}
+button:active,.scenes button:active,.pad button:active{
+ box-shadow:0 0 20px var(--neon2);
+}
+.sw:checked{background:var(--neon)}
+input[type=range]{accent-color:var(--neon)}
+.gauge svg #arc{stroke:var(--neon)}
+.hero{position:relative;overflow:hidden}
+.hero::after{
+ content:"";position:absolute;inset:auto -25% -70% 25%;height:140px;
+ background:radial-gradient(ellipse,var(--neon2),transparent 65%);
+ pointer-events:none;
+}
+.wall-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:10px}
+.wall-choice{
+ min-height:76px;border:1px solid var(--line);border-radius:14px;
+ padding:9px;cursor:pointer;background:var(--s2);position:relative;overflow:hidden
+}
+.wall-choice.active{border-color:var(--neon);box-shadow:0 0 18px var(--neon2)}
+.wall-preview{height:42px;border-radius:9px;margin-bottom:5px}
+.wall-choice small{font-size:10px;color:var(--mut)}
+.color-row{display:flex;align-items:center;gap:10px}
+.color-row input[type=color]{width:58px;height:40px}
+.hex{direction:ltr;font-weight:700;font-size:12px}
+.custom-note{font-size:11px;color:var(--mut);line-height:1.5}
+
+</style>
+
+<style id="esp32-pro-appearance-css">
+.appearance-pro{margin-top:14px}.appearance-pro .setting-head{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.appearance-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
+.appearance-item{background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:11px}
+.appearance-item label{display:block;font-size:11px;opacity:.72;margin-bottom:7px}
+.appearance-item input[type=color]{width:100%;height:42px;border:0;border-radius:12px;background:transparent;padding:0}
+.appearance-item input[type=range]{width:100%}.wall-mini{height:54px;border-radius:12px;border:1px solid rgba(255,255,255,.1);margin-top:8px}
+.appearance-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}.appearance-actions button{flex:1;min-width:120px}
+.sync-badge{font-size:10px;padding:5px 8px;border-radius:99px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08)}
+.sync-badge.ok{color:#7dffbd}.sync-badge.warn{color:#ffd36b}.hex-pro{font-family:monospace;direction:ltr;text-align:center}
+@media(max-width:520px){.appearance-grid{grid-template-columns:1fr}}
+</style>
+
+</head>
+<body>
+<header>
+  <h1>پراید ۱۳۸۹<small>کنترلر ESP32-S3</small></h1>
+  <span class="chip"><i class="dot"></i><span id="hv">۱۲٫۶ ولت</span></span>
+</header>
+
+<main>
+<section class="view on" id="v0">
+
+  <div class="hero">
+    <div class="hero-title">
+      <div><strong>CAR CONTROL PRO</strong><div class="hero-sub">ESP32-S3 • پراید ۱۳۸۹</div></div>
+      <span class="chip"><i class="dot"></i><span id="connState">آنلاین</span></span>
+    </div>
+    <div class="hero-actions">
+      <button data-sc="close">🔒 بستن همه</button>
+      <button data-sc="vent">🌬️ تهویه</button>
+      <button id="panic">⛔ توقف همه</button>
+    </div>
+  </div>
+  <div id="quick-status">
+    <div class="qs"><b id="qsV">۱۲٫۶ V</b><small>ولتاژ سیستم</small></div>
+    <div class="qs"><b id="qsA">۰٫۰ A</b><small>وضعیت حرکت</small></div>
+    <div class="qs"><b id="qsW">۰ W</b><small>وضعیت</small></div>
+  </div>
+  <div class="scenes">
+    <button data-sc="close">بستن همه</button><button data-sc="open">باز کردن همه</button>
+    <button data-sc="vent">تهویه</button><button data-sc="park">حالت پارک</button>
+  </div>
+  <div class="wins" id="wins"></div>
+  <div class="card" id="tg"></div>
+</section>
+
+<section class="view" id="vl">
+  <div class="scenes">
+    <button data-ls="off">خاموش همه</button><button data-ls="dance">رقص نور همه</button><button data-ls="flash">چشمک‌زن همه</button><button data-ls="police">عقب: پلیسی</button><button data-ls="plane">عقب: هواپیما</button>
+  </div>
+  <div class="card">
+    <div class="seg" id="vw" style="margin-bottom:10px"><button data-vw="top" aria-pressed="true">نمای بالا</button><button data-vw="side" aria-pressed="false">نمای کنار</button></div>
+<svg id="car" viewBox="0 0 200 340" aria-label="نمای بالای پراید">
+<g fill="#15181c" stroke="#666" stroke-width="1"><rect x="31" y="52" width="10" height="40" rx="4"/><rect x="159" y="52" width="10" height="40" rx="4"/><rect x="31" y="232" width="10" height="40" rx="4"/><rect x="159" y="232" width="10" height="40" rx="4"/></g>
+<g fill="var(--s2)" stroke="var(--mut)" stroke-width="1.2"><ellipse cx="34" cy="102" rx="7" ry="4.5"/><ellipse cx="166" cy="102" rx="7" ry="4.5"/></g>
+<rect x="40" y="14" width="120" height="312" rx="24" fill="var(--s1)" stroke="var(--mut)" stroke-width="2.4"/>
+<g fill="none" stroke="var(--line)" stroke-width="1.2"><path d="M54 24V86M146 24V86"/><path d="M40 183H52M148 183H160M40 250H50M150 250H160"/><rect x="54" y="140" width="92" height="98" rx="8"/></g>
+<g fill="#1b2635" stroke="var(--line)" stroke-width="1.2"><path d="M50 92H150L144 140H56Z"/><path d="M56 238H144L150 274H50Z"/></g>
+<g fill="var(--s2)" stroke="var(--line)" stroke-width="1.2"><rect x="54" y="112" width="92" height="14" rx="5"/><rect x="94" y="140" width="12" height="52" rx="4"/><rect x="62" y="148" width="28" height="28" rx="8"/><rect x="110" y="148" width="28" height="28" rx="8"/><rect x="62" y="196" width="34" height="26" rx="8"/><rect x="104" y="196" width="34" height="26" rx="8"/><rect x="60" y="244" width="80" height="22" rx="6"/></g>
+<ellipse cx="77" cy="120" rx="10" ry="3.5" fill="none" stroke="var(--mut)" stroke-width="1.5"/>
+<rect x="46" y="16" width="26" height="7" rx="3" fill="#ffb000" opacity=".85"/><rect x="128" y="16" width="26" height="7" rx="3" fill="#ffb000" opacity=".85"/>
+<rect x="46" y="317" width="26" height="6" rx="3" fill="var(--bad)" opacity=".6"/><rect x="128" y="317" width="26" height="6" rx="3" fill="var(--bad)" opacity=".6"/>
+<text x="100" y="10" text-anchor="middle" font-size="8" fill="var(--mut)">جلو</text><text x="100" y="338" text-anchor="middle" font-size="8" fill="var(--mut)">عقب</text>
+<g id="zones"></g></svg>
+<svg id="side" viewBox="0 0 300 96" aria-label="نمای کنار پراید">
+<path d="M2 76.6L0 66.8L19.6 58.9L74.5 48.1L123.5 8.9L149 7L227.4 6.6L266.6 43.8L296 45.2L299.5 48.1L299 75.6L270.5 81.5L241 83.5L94 83.5L19.6 82.5Z" fill="#d8dadd" stroke="#8d939b" stroke-width="1.3" stroke-linejoin="round"/>
+<g fill="#1b2635" stroke="#8d939b" stroke-width="1"><path d="M80.4 50L123.5 13.8L158.8 12.9V50.5Z"/><path d="M168.6 12.5H215.6L241 46.2L168.6 50.5Z"/></g>
+<path d="M163.7 12V51M80 51H241" stroke="#8d939b" stroke-width="1.6" fill="none"/>
+<g fill="#8d939b"><rect x="140" y="55" width="11" height="2.6" rx="1.3"/><rect x="204" y="55" width="11" height="2.6" rx="1.3"/><rect x="76" y="44" width="8" height="4.5" rx="2"/></g>
+<rect x="1" y="59" width="8" height="5" rx="2" fill="#ffb000"/><rect x="291" y="50" width="8" height="5" rx="2" fill="#d93a2f"/>
+<g fill="#15181c" stroke="#666"><circle cx="55" cy="72" r="17"/><circle cx="228" cy="72" r="17"/></g><g fill="#8b9098"><circle cx="55" cy="72" r="8"/><circle cx="228" cy="72" r="8"/></g>
+<g id="zs"></g></svg>
+    <label class="row"><div>ماشین ایستاده<small>افکت چراغ عقب فقط در حالت توقف مجاز است (در ماشین واقعی از ترمز دستی یا دنده)</small></div><input class="sw" type="checkbox" role="switch" id="parked" checked></label>
+    <p class="rn" id="rn"></p>
+  </div>
+  <div id="lights"></div>
+</section>
+
+<section class="view" id="v1">
+  <div class="card">
+    <h2>کنترل زمان‌محور موتورها</h2>
+    <div class="gauge">
+      <svg viewBox="0 0 120 120" aria-hidden="true"><circle cx="60" cy="60" r="52" fill="none" stroke="var(--s2)" stroke-width="10"/><circle id="arc" cx="60" cy="60" r="52" fill="none" stroke="var(--acc)" stroke-width="10" stroke-linecap="round" stroke-dasharray="327" stroke-dashoffset="327" transform="rotate(-90 60 60)"/><text id="an" x="60" y="62" text-anchor="middle" font-size="26" font-weight="800" fill="currentColor">۰</text><text x="60" y="80" text-anchor="middle" font-size="11" fill="var(--mut)">زمان</text></svg>
+      <div class="grid3"><div><b id="v">۰</b><small>ولت</small></div><div><b id="w">۰</b><small>مدت حرکت</small></div><div><b id="t">۰</b><small>زمان تنظیم‌شده</small></div></div>
+    </div>
+    <canvas id="ch" aria-label="نمودار حرکت"></canvas>
+    <div class="btns"><button id="pinch">تست توقف ایمن</button><button id="rain">شبیه‌سازی باران</button></div>
+    <p class="stat" id="hint"></p>
+  </div>
+  <div class="card">
+    <h2>وضعیت حرکت شیشه‌ها</h2>
+    <div id="health"></div>
+  </div>
+</section>
+
+<section class="view" id="v2">
+  <div class="card">
+    <h2>ظاهر اپلیکیشن</h2>
+    <div class="row">
+      <div>رنگ نئون<small>رنگ اصلی دکمه‌ها، خطوط و افکت‌های داشبورد</small></div>
+      <div class="color-row">
+        <input id="neonColor" type="color" value="#ffad19">
+        <span class="hex" id="neonHex">#FFAD19</span>
+      </div>
+    </div>
+    <div class="row" style="display:block">
+      <div>والپیپر داشبورد<small>سبک و داخلی؛ بدون دانلود از اینترنت</small></div>
+      <div class="wall-grid" id="wallpapers">
+        <button class="wall-choice" data-wall="dark">
+          <div class="wall-preview" style="background:linear-gradient(145deg,#070a0f,#17202b)"></div><small>Dark Carbon</small>
+        </button>
+        <button class="wall-choice" data-wall="carbon">
+          <div class="wall-preview" style="background:repeating-linear-gradient(45deg,#0b1016 0 4px,#111923 4px 8px)"></div><small>Carbon</small>
+        </button>
+        <button class="wall-choice" data-wall="blue">
+          <div class="wall-preview" style="background:radial-gradient(circle at 50% 0,#12354b,#070a0f 70%)"></div><small>Blue Night</small>
+        </button>
+        <button class="wall-choice" data-wall="amber">
+          <div class="wall-preview" style="background:radial-gradient(circle at 70% 30%,#49300b,#080a0f 68%)"></div><small>Amber Garage</small>
+        </button>
+        <button class="wall-choice" data-wall="light">
+          <div class="wall-preview" style="background:linear-gradient(145deg,#f7f9fb,#dce4ec)"></div><small>Light</small>
+        </button>
+        <button class="wall-choice" data-wall="custom">
+          <div class="wall-preview" id="customPreview" style="background:#111"></div><small>رنگ دلخواه</small>
+        </button>
+      </div>
+      <div class="row" style="margin-top:8px">
+        <div>رنگ والپیپر دلخواه<small>برای حالت رنگ دلخواه</small></div>
+        <input id="wallColor" type="color" value="#101721">
+      </div>
+      <p class="custom-note">تنظیمات ظاهر در حافظه مرورگر ذخیره می‌شوند و برای اجرای آفلاین روی ESP32 مناسب‌اند.</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>حساسیت و زمان‌بندی</h2>
+    <div class="row" style="display:block"><div style="display:flex;justify-content:space-between">آستانه آنتی‌پینچ<b id="l0"></b></div><input type="range" id="thr" min="5" max="10" step="0.5" value="7"><small style="color:var(--mut)">پایین‌تر = حساس‌تر، ولی احتمال توقف اشتباه بیشتر</small></div>
+    <div class="row" style="display:block"><div style="display:flex;justify-content:space-between">مرز لمس سریع و طولانی<b id="l1"></b></div><input type="range" id="tap" min="150" max="600" step="50" value="300"></div>
+    <div class="row" style="display:block"><div style="display:flex;justify-content:space-between">حداکثر زمان کار رله<b id="l2"></b></div><input type="range" id="mx" min="4" max="8" step="0.5" value="6"></div>
+  </div>
+  <div class="card"><h2>تم</h2><div class="seg" id="theme"><button data-t="auto" aria-pressed="true">خودکار</button><button data-t="light" aria-pressed="false">روشن</button><button data-t="dark" aria-pressed="false">تاریک</button></div></div>
+  <div class="card">
+    <h2>سیستم</h2>
+    <div class="row"><div>نسخه فرم‌ور<small id="fw">۱٫۲٫۰</small></div><button id="ota">به‌روزرسانی OTA</button></div>
+    <div class="bar" hidden id="ob"><i id="oi"></i></div>
+    <div class="row"><div>آدرس<small style="direction:ltr;text-align:right">192.168.4.1</small></div><span class="chip"><i class="dot"></i>متصل</span></div>
+    <div class="row"><div>زمان روشن بودن<small id="up">۰</small></div></div>
+  </div>
+
+<div class="card appearance-pro">
+  <div class="setting-head"><b>🎨 ظاهر حرفه‌ای و ESP32</b><span id="espSyncBadge" class="sync-badge warn">حافظه محلی</span></div>
+  <div class="appearance-grid">
+    <div class="appearance-item">
+      <label>رنگ نئون اصلی</label>
+      <input id="neonPickerPro" type="color" value="#00F5FF">
+      <input id="neonHexPro" class="hex-pro" value="#00F5FF" maxlength="7" inputmode="text" style="width:100%;margin-top:7px">
+    </div>
+    <div class="appearance-item">
+      <label>شدت نور نئون</label>
+      <input id="glowPro" type="range" min="0" max="100" value="70">
+      <div id="glowValPro" style="font-size:11px;opacity:.7;text-align:center">70%</div>
+    </div>
+    <div class="appearance-item">
+      <label>والپیپر آماده</label>
+      <select id="wallPro" style="width:100%;height:42px;border-radius:12px;padding:0 10px">
+        <option value="carbon">Carbon Garage</option><option value="blue">Blue Night</option>
+        <option value="amber">Amber Garage</option><option value="graphite">Graphite</option>
+        <option value="light">Light</option><option value="custom">رنگ دلخواه</option>
+      </select>
+      <div id="wallPreviewPro" class="wall-mini"></div>
+    </div>
+    <div class="appearance-item">
+      <label>رنگ والپیپر دلخواه</label>
+      <input id="wallColorPro" type="color" value="#071018">
+      <div style="font-size:10px;opacity:.58;margin-top:5px">برای حالت «رنگ دلخواه»</div>
+    </div>
+  </div>
+  <div class="appearance-actions">
+    <button class="btn" onclick="saveAppearanceESP()">💾 ذخیره روی ESP32</button>
+    <button class="btn" onclick="loadAppearanceESP()">🔄 دریافت از ESP32</button>
+    <button class="btn" onclick="resetAppearanceESP()">↩️ پیش‌فرض</button>
+  </div>
+  <div style="font-size:10px;opacity:.55;margin-top:8px">در صورت فعال بودن API تنظیمات، این ظاهر روی خود ESP32 ذخیره می‌شود و بین گوشی‌ها نیز قابل بازیابی است.</div>
+</div>
+</section>
+
+<section class="view" id="v3"><div class="card"><h2>لاگ رویدادها</h2><ul id="log"></ul></div></section>
+</main>
+
+<nav><div id="nav">
+  <button data-v="0" aria-current="page">کنترل</button><button data-v="1">چراغ‌ها</button><button data-v="2">سنسورها</button><button data-v="3">تنظیمات</button><button data-v="4">لاگ</button>
+</div></nav>
+<div id="toast" role="status"></div>
+
+<script>
+const $=id=>document.getElementById(id),fa=n=>String(n).replace(/\d/g,d=>'۰۱۲۳۴۵۶۷۸۹'[d]).replace('.','٫');
+const S={w:[0,1].map(()=>({o:0,d:0,rev:0,sum:0,n:0,run:0})),tgt:[null,null],pinch:false,rain:false,thr:7,tap:300,mx:6,
+ lock:true,safe:true,child:false,autoLock:true,autoRain:true,
+ runs:[[3.2,3.3,3.2,3.4,3.3,3.4],[3.1,3.2,3.5,3.7,3.9,4.1]]};
+const NAMES=['راننده','شاگرد'],N=120,hist=Array(N).fill(0);
+let tt;function toast(m){const t=$('toast');t.textContent=m;t.classList.add('on');clearTimeout(tt);tt=setTimeout(()=>t.classList.remove('on'),2200)}
+function log(m,bad,tst){const li=document.createElement('li');if(bad)li.className='w';li.innerHTML='<time>'+new Date().toLocaleTimeString('fa-IR',{hour:'2-digit',minute:'2-digit',second:'2-digit'})+'</time><span></span>';li.lastChild.textContent=m;$('log').prepend(li);while($('log').children.length>50)$('log').lastChild.remove();if(tst||bad)toast(m)}
+
+// professional quick controls
+$('panic').addEventListener('click',()=>{
+  S.tgt=[null,null];
+  S.w.forEach(w=>{w.d=0;w.rev=0});
+  if(REAL){net('/cmd?w=0&d=0');net('/cmd?w=1&d=0')}
+  log('توقف اضطراری — تمام فرمان‌های شیشه قطع شد',true,true);
+});
+
+// windows
+$('wins').innerHTML=NAMES.map((n,i)=>`<div class="win"><header>${n}<em id="s${i}"></em></header>
+<div class="glass" id="gl${i}" aria-label="کشیدن برای تعیین موقعیت شیشه ${n}"><div class="frame"><u class="rim"></u><div class="pane"><i id="f${i}"></i></div></div><b id="p${i}"></b></div>
+<div class="pad"><button data-w="${i}" data-d="-1" aria-label="پایین ${n}">▼</button><button data-w="${i}" data-d="1" aria-label="بالا ${n}">▲</button></div>
+${i?'<button class="mini" id="ptouch">لمس فیزیکی پنل شاگرد</button>':'<span class="stat">شیشه را بکش تا موقعیت بگیرد</span>'}</div>`).join('');
+document.querySelectorAll('.pad button').forEach(b=>{
+ let t0=0,hb=0;const w=+b.dataset.w,d=+b.dataset.d;
+ b.addEventListener('pointerdown',e=>{e.preventDefault();b.setPointerCapture(e.pointerId);t0=performance.now();S.tgt[w]=null;Object.assign(S.w[w],{d,rev:0});if(REAL){const u='/cmd?w='+w+'&d='+d+'&b=1';net(u);clearInterval(hb);hb=setInterval(()=>net(u),250)}});
+ const up=()=>{if(!t0)return;const dt=performance.now()-t0;t0=0;
+  clearInterval(hb);if(dt<S.tap){if(REAL)net('/cmd?w='+w+'&auto=1');log('لمس سریع '+NAMES[w]+' — اتوماتیک')}else{S.w[w].d=0;if(REAL)net('/cmd?w='+w+'&d=0');log('لمس طولانی '+NAMES[w]+' — دستی')}};
+ b.addEventListener('pointerup',up);b.addEventListener('pointercancel',up);
+});
+[0,1].forEach(i=>{let lg=0;const g=$('gl'+i),set=e=>{const r=g.querySelector('.pane').getBoundingClientRect();S.tgt[i]=Math.round(Math.min(100,Math.max(0,(e.clientY-r.top)/r.height*100)));S.w[i].rev=0;if(REAL&&Date.now()-lg>150){lg=Date.now();net('/cmd?w='+i+'&goto='+S.tgt[i])}};
+ let on=false;g.addEventListener('pointerdown',e=>{on=true;g.setPointerCapture(e.pointerId);set(e)});
+ g.addEventListener('pointermove',e=>{if(on)set(e)});g.addEventListener('pointerup',()=>{on=false;if(REAL&&S.tgt[i]!==null)net('/cmd?w='+i+'&goto='+S.tgt[i])});g.addEventListener('pointercancel',()=>on=false)});
+$('ptouch').addEventListener('click',()=>{if(S.child)return log('قفل کودک فعال است — لمس پنل شاگرد نادیده گرفته شد',false,true);S.tgt[1]=0;log('لمس فیزیکی شاگرد — بستن اتوماتیک')});
+// toggles
+const TG=[['lock','قفل مرکزی','ورودی دربها را قفل می‌کند'],['safe','حالت ایمنی','آنتی‌پینچ با جریان موتور'],['child','قفل کودک','غیرفعال‌کردن لمس پنل شاگرد'],['autoLock','بستن با قفل‌کردن','شیشه‌ها با قفل شدن بسته شوند'],['autoRain','بستن با باران','با تشخیص باران شیشه‌ها بسته شوند']];
+$('tg').innerHTML=TG.map(([k,t,s])=>`<label class="row"><div>${t}<small>${s}</small></div><input class="sw" type="checkbox" role="switch" data-k="${k}" ${S[k]?'checked':''}></label>`).join('');
+function setT(k,v){S[k]=v;document.querySelector(`[data-k=${k}]`).checked=v}
+document.querySelectorAll('.sw[data-k]').forEach(c=>c.addEventListener('change',()=>{const k=c.dataset.k;S[k]=c.checked;log(TG.find(x=>x[0]===k)[1]+': '+(c.checked?'روشن':'خاموش'));if(REAL){net('/cmd?'+k+'='+(+c.checked));if(k==='lock'&&c.checked&&S.autoLock)[0,1].forEach(i=>net('/cmd?w='+i+'&goto=0'))}if(k==='lock'&&c.checked&&S.autoLock){S.tgt=[0,0];log('بستن خودکار شیشه‌ها همزمان با قفل')}}));
+// scenes
+const SC={close:()=>{S.tgt=[0,0];toast('بستن همه شیشه‌ها')},open:()=>{S.tgt=[100,100];toast('باز کردن همه شیشه‌ها')},vent:()=>{S.tgt=[15,15];toast('تهویه: ۱۵٪ باز')},park:()=>{S.tgt=[0,0];setT('lock',true);toast('حالت پارک: شیشه‌ها بسته و قفل فعال')}};
+document.querySelectorAll('[data-sc]').forEach(b=>b.addEventListener('click',()=>{SC[b.dataset.sc]();S.w.forEach(w=>w.rev=0);if(REAL){S.tgt.forEach((t,i)=>t!==null&&net('/cmd?w='+i+'&goto='+t));if(b.dataset.sc==='park')net('/cmd?lock=1')}log('صحنه: '+b.textContent)}));
+// tabs
+document.querySelectorAll('#nav button').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('.view').forEach((v,i)=>v.classList.toggle('on',i==b.dataset.v));document.querySelectorAll('#nav button').forEach(x=>x.removeAttribute('aria-current'));b.setAttribute('aria-current','page');scrollTo(0,0)}));
+
+/* ===== local ESP32-safe appearance settings ===== */
+const WALLS={
+ dark:'linear-gradient(145deg,#080b10 0%,#101721 52%,#17100a 100%)',
+ carbon:'repeating-linear-gradient(45deg,#080d13 0 5px,#101720 5px 10px)',
+ blue:'radial-gradient(circle at 50% 0,#12354b,#070a0f 72%)',
+ amber:'radial-gradient(circle at 70% 30%,#49300b,#080a0f 68%)',
+ light:'linear-gradient(145deg,#f7f9fb,#dce4ec)'
+};
+function saveLook(){
+ localStorage.setItem('car_neon',$('neonColor').value);
+ localStorage.setItem('car_wall',$('wallChoice')?.value||'dark');
+ localStorage.setItem('car_wall_color',$('wallColor').value);
+}
+function applyLook(){
+ const neon=localStorage.getItem('car_neon')||'#ffad19';
+ const wall=localStorage.getItem('car_wall')||'dark';
+ const wc=localStorage.getItem('car_wall_color')||'#101721';
+ document.documentElement.style.setProperty('--neon',neon);
+ document.documentElement.style.setProperty('--acc',neon);
+ document.documentElement.style.setProperty('--wall',
+   wall==='custom'?wc:(WALLS[wall]||WALLS.dark));
+ $('neonColor').value=neon;$('neonHex').textContent=neon.toUpperCase();
+ $('wallColor').value=wc;
+ document.querySelectorAll('.wall-choice').forEach(b=>b.classList.toggle('active',b.dataset.wall===wall));
+ $('customPreview').style.background=wc;
+}
+function chooseWall(w){
+ localStorage.setItem('car_wall',w);
+ applyLook();
+}
+const wallChoice={value:localStorage.getItem('car_wall')||'dark'};
+Object.defineProperty(window,'wallChoice',{value:wallChoice});
+$('neonColor').addEventListener('input',e=>{
+ document.documentElement.style.setProperty('--neon',e.target.value);
+ document.documentElement.style.setProperty('--acc',e.target.value);
+ $('neonHex').textContent=e.target.value.toUpperCase();
+ localStorage.setItem('car_neon',e.target.value);
+});
+$('wallColor').addEventListener('input',e=>{
+ wallChoice.value='custom';
+ localStorage.setItem('car_wall','custom');
+ localStorage.setItem('car_wall_color',e.target.value);
+ applyLook();
+});
+document.querySelectorAll('.wall-choice').forEach(b=>b.addEventListener('click',()=>chooseWall(b.dataset.wall)));
+applyLook();
+
+// settings
+function lab(){$('l0').textContent=fa(S.thr)+' A';$('l1').textContent=fa(S.tap)+' ms';$('l2').textContent=fa(S.mx)+' ثانیه'}
+[['thr','thr'],['tap','tap'],['mx','mx']].forEach(([id,k])=>$(id).addEventListener('input',e=>{S[k]=+e.target.value;lab();if(REAL&&(k==='thr'||k==='mx'))net('/cmd?'+k+'='+S[k])}));lab();
+document.querySelectorAll('#theme button').forEach(b=>b.addEventListener('click',()=>{const t=b.dataset.t;t==='auto'?document.documentElement.removeAttribute('data-theme'):document.documentElement.setAttribute('data-theme',t);document.querySelectorAll('#theme button').forEach(x=>x.setAttribute('aria-pressed',x===b))}));
+$('ota').addEventListener('click',()=>{$('ob').hidden=false;let p=0;$('ota').disabled=true;const iv=setInterval(()=>{p+=4;$('oi').style.width=p+'%';if(p>=100){clearInterval(iv);$('fw').textContent='۱٫۳٫۰';$('ota').disabled=false;setTimeout(()=>$('ob').hidden=true,600);log('OTA کامل شد — نسخه ۱٫۳٫۰',false,true)}},120)});
+$('pinch').addEventListener('click',()=>{S.tgt=[null,null];S.w.forEach(w=>w.d=0);if(REAL){net('/cmd?w=0&d=0');net('/cmd?w=1&d=0')}log('تست توقف ایمن: تمام رله‌ها قطع شدند',false,true)});
+$('rain').addEventListener('click',()=>{S.rain=!S.rain;$('rain').textContent=S.rain?'قطع باران':'شبیه‌سازی باران';log(S.rain?'باران تشخیص داده شد':'باران قطع شد');if(S.rain&&S.autoRain){S.tgt=[0,0];log('بستن خودکار شیشه‌ها به‌خاطر باران',false,true)}});
+// health
+function health(){
+ $('health').innerHTML='<p class="hl"><span style="color:var(--ok)">حالت کنترل زمان‌محور فعال است</span></p><p class="stat">بالا: ۵ ثانیه — پایین: ۳٫۵ ثانیه — بدون سنسور جریان</p>';
+}
+// sim
+const t0=Date.now();let tk=0;
+function reset(w){w.sum=w.n=w.run=0}
+setInterval(()=>{
+ tk++;
+ let total=0;
+ if(REAL&&DEV){
+   S.w.forEach((w,i)=>{w.o=DEV.o[i]||0;w.d=DEV.d[i]||0;w.rev=DEV.rev?.[i]||0});
+ }else if(!REAL){
+   S.w.forEach((w,i)=>{
+     if(!w.rev&&S.tgt[i]!==null){
+       if(Math.abs(w.o-S.tgt[i])<=0.5){w.d=0;S.tgt[i]=null;reset(w)}
+       else w.d=w.o>S.tgt[i]?1:-1;
+     }
+     if(w.d){
+       // d=1 => UP/CLOSE: 0..100% in 5s; d=-1 => DOWN/OPEN: 0..100% in 3.5s
+       const step=(w.d>0?100/(5*10):100/(3.5*10));
+       w.o=Math.min(100,Math.max(0,w.o-w.d*step));
+       w.run++;
+       if((w.o<=0&&w.d>0)||(w.o>=100&&w.d<0)){w.d=0;S.tgt[i]=null;log(NAMES[i]+': انتهای مسیر — رله قطع شد');}
+       else if(w.run>60){w.d=0;S.tgt[i]=null;log(NAMES[i]+': تایم‌اوت ایمنی — رله قطع شد',true);}
+     }
+   });
+ }
+ S.w.forEach((w,i)=>{
+   $('f'+i).style.height=(100-w.o)+'%';
+   $('p'+i).textContent=fa(Math.round(w.o))+'٪ باز';
+   $('s'+i).textContent=w.rev?'برگشت ایمن':w.d>0?'در حال بسته شدن':w.d<0?'در حال باز شدن':'متوقف';
+ });
+ const v=REAL?(DEV?DEV.v:0):12.6;
+ $('hv').textContent=fa(v.toFixed(1))+' ولت';
+ $('qsV').textContent=fa(v.toFixed(1))+' V';
+ $('qsA').textContent='—';
+ $('qsW').textContent='—';
+ $('connState').textContent=REAL?(DEV?'آنلاین':'قطع ارتباط'):'دمو';
+ if(tk%3===0){
+   $('v').textContent=fa(v.toFixed(1));
+   $('w').textContent='—';
+   $('t').textContent='۵ث / ۳٫۵ث';
+   $('an').textContent='—';
+   $('arc').setAttribute('stroke-dashoffset','327');
+   $('hint').textContent='کنترل شیشه‌ها زمان‌محور است؛ سنسور جریان لازم نیست.';
+   $('up').textContent=fa(Math.floor((Date.now()-t0)/1000))+' ثانیه';
+   if($('v1').classList.contains('on'))plot();
+ }
+},100);
+function plot(){
+ const c=$('ch');if(!c)return;
+ const r=devicePixelRatio||1,W=c.clientWidth,H=c.clientHeight;
+ if(c.width!==W*r){c.width=W*r;c.height=H*r}
+ const x=c.getContext('2d');x.clearRect(0,0,W,H);
+ x.fillStyle=getComputedStyle(document.documentElement).getPropertyValue('--mut');
+ x.font='12px Tahoma';x.textAlign='center';x.fillText('حالت زمان‌محور — بدون سنسور جریان',W/2,H/2);
+}
+// lights
+const LK=[['int','ریسه انبه‌ای زیر آینه','۵ سانتی‌متر، ۱۲ ولت، وسط ماشین',1],['sq','ال‌ای‌دی قرمز مربعی','توخالی، محیط ۸ سانتی‌متر، ۱۲ ولت، وسط سقف',1],['rear','چراغ آنتی‌هدلایت عقب','دو ال‌ای‌دی سفید، پشت چراغ‌های قرمز عقب',2],['foot','چراغ زیرپایی','هنوز نصب نشده',4]];
+const L={parked:true,
+ int:{inst:true,on:true,mode:'steady',br:80,sp:5,pat:'wave',col:'#ffa62b'},
+ sq:{inst:true,on:false,mode:'steady',br:100,sp:5,pat:'wave',col:'#ff2a2a'},
+ rear:{inst:true,on:false,mode:'steady',br:100,sp:5,pat:'chase',col:'#ffffff'},
+ foot:{inst:false,on:false,mode:'steady',br:60,sp:5,pat:'wave',col:'#3aa0ff',rb:false}};
+const MODES=[['steady','ثابت'],['flash','چشمک‌زن'],['dance','رقص نور']],RMODES=[MODES[0],MODES[1],['police','پلیسی'],['plane','هواپیما'],MODES[2]],MN={steady:'ثابت',flash:'چشمک‌زن',dance:'رقص نور',police:'پلیسی',plane:'چراغ هواپیما'};
+const NM=k=>LK.find(x=>x[0]===k)[1];
+$('lights').innerHTML=LK.map(([k,n,s,nz])=>`<div class="card lc" id="c-${k}"><label class="row" style="padding-top:0"><div>${n}<small>${s}</small></div><input class="sw" type="checkbox" role="switch" data-l="${k}" data-p="on"></label>
+${k==='foot'?'<label class="row"><div>نصب شده<small>بعد از نصب روشن کنید تا کنترل فعال شود</small></div><input class="sw" type="checkbox" role="switch" data-l="foot" data-p="inst"></label>':''}
+<div class="ctl"><div class="seg">${(k==='rear'?RMODES:MODES).map(([v,t])=>`<button data-l="${k}" data-p="mode" data-val="${v}">${t}</button>`).join('')}</div>
+<div class="sl">روشنایی<b id="br-${k}"></b></div><input type="range" min="5" max="100" data-l="${k}" data-p="br">
+<div id="x-${k}"><div class="sl">سرعت<b id="sp-${k}"></b></div><input type="range" min="1" max="10" data-l="${k}" data-p="sp"></div>
+<div class="row" id="pt-${k}" style="margin-top:6px">الگوی رقص نور<select data-l="${k}" data-p="pat"><option value="wave">${nz>1?'موج':'نفس‌کشی'}</option>${nz>1?'<option value="chase">تعقیب</option>':''}<option value="rand">تصادفی</option></select></div>
+${k==='foot'?'<div class="row">رنگ<input type="color" data-l="foot" data-p="col"></div><label class="row" id="rb-foot">رنگین‌کمان (در رقص نور)<input class="sw" type="checkbox" role="switch" data-l="foot" data-p="rb"></label>':''}</div></div>`).join('');
+const G={int:[[88,142,24,5]],sq:[[95,184,10,10]],rear:[[52,318,14,4],[134,318,14,4]],foot:[[62,128,26,10],[112,128,26,10],[62,180,26,10],[112,180,26,10]]},
+GS={int:[[126,15,16,3]],sq:[[172,14,8,8]],rear:[[292,51,6,3],[292,51,6,3]],foot:[[92,44,16,4],[92,44,16,4],[170,44,16,4],[170,44,16,4]]},ZE={};
+LK.forEach(([k,,,nz])=>{ZE[k]=[];for(let z=0;z<nz;z++){const pr=[['zones',G],['zs',GS]].map(([g,M])=>{const e=document.createElementNS('http://www.w3.org/2000/svg','rect');e.setAttribute('class','z');e.setAttribute('rx',k==='sq'?1.5:2);
+ ['x','y','width','height'].forEach((n,i)=>e.setAttribute(n,M[k][z][i]));$(g).appendChild(e);return e});ZE[k].push(pr)}});
+function setView(v){$('car').style.display=v==='top'?'block':'none';$('side').style.display=v==='side'?'block':'none';document.querySelectorAll('#vw button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.vw===v))}
+document.querySelectorAll('#vw button').forEach(b=>b.addEventListener('click',()=>setView(b.dataset.vw)));setView('top');
+function pat(p,t,f,z,n){
+ if(p==='wave')return .5+.5*Math.sin(2*Math.PI*(t*f-z/n));
+ if(p==='chase'&&n>1){const m=n-1,ph=(t*f*n)%(2*m),pos=ph<=m?ph:2*m-ph;return Math.max(0,1-Math.abs(z-pos)*.7)}
+ const x=Math.sin((Math.floor(t*f*3)+z*7.13)*12.9898)*43758.5453;return (x-Math.floor(x))>.5?1:.08}
+function ui(k){const l=L[k];$('br-'+k).textContent=fa(l.br)+'٪';$('sp-'+k).textContent=fa(l.sp)+' از ۱۰';
+ $('x-'+k).hidden=l.mode==='steady';$('pt-'+k).hidden=l.mode!=='dance';if(k==='foot')$('rb-foot').hidden=l.mode!=='dance';
+ document.querySelectorAll(`[data-l=${k}][data-p=mode]`).forEach(b=>b.setAttribute('aria-pressed',b.dataset.val===l.mode));
+ $('c-'+k).classList.toggle('noinst',!l.inst);document.querySelector(`[data-l=${k}][data-p=on]`).disabled=!l.inst;
+ ZE[k].forEach(pr=>pr.forEach(e=>e.style.strokeDasharray=l.inst?'':'3 2'));
+ $('rn').textContent=!L.parked&&L.rear.on&&L.rear.mode!=='steady'?'ماشین در حال حرکت است — افکت چراغ عقب غیرفعال شد و فقط ثابت روشن می‌ماند':''}
+function syncL(){document.querySelectorAll('#lights [data-l]').forEach(c=>{if(c.tagName==='BUTTON')return;const v=L[c.dataset.l][c.dataset.p];c.type==='checkbox'?c.checked=v:c.value=v});LK.forEach(x=>ui(x[0]))}
+$('lights').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;const k=b.dataset.l,l=L[k];l.mode=b.dataset.val;ui(k);sendL(k);
+ if(k==='rear'&&!L.parked&&l.mode!=='steady')toast('افکت چراغ عقب فقط وقتی ماشین ایستاده مجاز است');log(NM(k)+': حالت '+MN[l.mode])});
+$('lights').addEventListener('input',e=>{const c=e.target;if(c.tagName==='BUTTON'||!c.dataset.p)return;const k=c.dataset.l,p=c.dataset.p;
+ L[k][p]=c.type==='checkbox'?c.checked:['br','sp'].includes(p)?+c.value:c.value;ui(k);sendL(k);
+ if(p==='on'||p==='inst'||p==='rb')log(NM(k)+(p==='inst'?' — نصب شده: ':p==='rb'?' — رنگین‌کمان: ':': ')+(c.checked?'روشن':'خاموش'));
+ else if(p==='pat')log(NM(k)+': '+c.selectedOptions[0].text)});
+$('parked').addEventListener('change',e=>{L.parked=e.target.checked;ui('rear');if(REAL)net('/led?parked='+(+L.parked));log('ماشین '+(L.parked?'ایستاده':'در حال حرکت')+' (شبیه‌سازی)',false,true)});
+document.querySelectorAll('[data-ls]').forEach(b=>b.addEventListener('click',()=>{const s=b.dataset.ls;
+ if(s==='police'||s==='plane'){L.rear.on=true;L.rear.mode=s}else LK.forEach(([k])=>{if(!L[k].inst)return;L[k].on=s!=='off';if(s!=='off')L[k].mode=s});
+ syncL();LK.forEach(x=>sendL(x[0]));log('چراغ‌ها: '+b.textContent,false,true)}));
+setInterval(()=>{const t=performance.now()/1000;
+ LK.forEach(([k,,,nz])=>{const l=L[k],mode=k==='rear'&&!L.parked?'steady':l.mode,f=.5+l.sp*.7;
+  for(let z=0;z<nz;z++){let v;if(!(l.inst&&l.on))v=0;else if(mode==='steady')v=1;else if(mode==='flash')v=(t*f)%1<.5?1:0;
+   else if(mode==='police'){const sl=Math.floor(((t*f/3)%1)*8);v=(z?(sl===4||sl===6):(sl===0||sl===2))?1:0}
+   else if(mode==='plane'){const q=(t*f/6)%1;v=(q<.06||(q>.14&&q<.2))?1:0}
+   else v=pat(l.pat,t,f/2,z,nz);
+   v*=l.br/100;const col=k==='foot'&&l.rb&&mode==='dance'?`hsl(${(t*f*40+z*90)%360} 90% 55%)`:l.col,on=v>.03;
+   ZE[k][z].forEach(e=>{if(k==='sq'){e.style.fill='none';e.style.stroke=on?col:'var(--line)';e.style.strokeWidth=2.5}else e.style.fill=on?col:'var(--s2)';
+    e.style.opacity=on?.3+.7*v:1;e.style.filter=v>.3?`drop-shadow(0 0 ${3+v*6}px ${col})`:'none'})}})},40);
+
+// اتصال به ESP32 (فقط وقتی صفحه از خود دستگاه با http باز شود)
+const REAL=location.protocol==='http:'&&!/^(localhost|127\.)/.test(location.hostname)&&!location.search.includes('sim');
+let DEV=null,fail=0,lastEid=-1,synced=false;const T={};
+const net=u=>fetch(u).catch(()=>{});
+function sendL(k){if(!REAL)return;clearTimeout(T[k]);T[k]=setTimeout(()=>{const l=L[k];net('/led?k='+k+'&on='+(+l.on)+'&inst='+(+l.inst)+'&mode='+l.mode+'&br='+l.br+'&sp='+l.sp+'&pat='+l.pat)},60)}
+function poll(){fetch('/get_sensors',{cache:'no-store'}).then(r=>r.json()).then(d=>{DEV=d;fail=0;
+ if(!synced){synced=true;['lock','safe'].forEach(k=>setT(k,!!d[k]));L.parked=!!d.parked;$('parked').checked=L.parked;
+  Object.keys(d.led).forEach(k=>Object.assign(L[k],d.led[k],{on:!!d.led[k].on,inst:!!d.led[k].inst}));syncL()}
+ if(d.eid!==lastEid){if(lastEid>=0&&d.ev)log(d.ev,true);lastEid=d.eid}
+ document.querySelector('.dot').style.background='var(--ok)'}).catch(()=>{if(++fail>4){DEV=null;document.querySelector('.dot').style.background='var(--bad)'}})}
+if(REAL){['pinch','rain','ota'].forEach(id=>$(id).style.display='none');poll();setInterval(poll,250)}
+syncL();
+health();log(REAL?'پنل به دستگاه واقعی وصل شد':'پنل آماده است (داده‌ها شبیه‌سازی هستند)');
+</script>
+
+<script id="esp32-pro-appearance-js">
+const APPEAR_KEY='car_appearance_v3', APPEAR_DEFAULT={neon:'#00F5FF',glow:70,wall:'carbon',wallColor:'#071018'};
+const WALLS_PRO={
+carbon:'radial-gradient(circle at 20% 20%,rgba(0,245,255,.08),transparent 30%),repeating-linear-gradient(135deg,#0a1117 0 8px,#0d151c 8px 16px)',
+blue:'radial-gradient(circle at 30% 10%,rgba(0,120,255,.18),transparent 35%),linear-gradient(145deg,#030914,#071c31 55%,#02070d)',
+amber:'radial-gradient(circle at 70% 10%,rgba(255,170,0,.17),transparent 35%),linear-gradient(145deg,#100c06,#21150a 55%,#070604)',
+graphite:'linear-gradient(145deg,#111318,#20242a 45%,#0b0d10)',light:'linear-gradient(145deg,#f3f6f8,#dfe5ea)',custom:''};
+function getAppearanceLocal(){try{return {...APPEAR_DEFAULT,...JSON.parse(localStorage.getItem(APPEAR_KEY)||'{}')}}catch(e){return {...APPEAR_DEFAULT}}}
+function setAppearanceLocal(a){localStorage.setItem(APPEAR_KEY,JSON.stringify(a))}
+function appearanceFromUI(){return {neon:(document.getElementById('neonPickerPro')?.value||'#00F5FF').toUpperCase(),glow:Number(document.getElementById('glowPro')?.value||70),wall:document.getElementById('wallPro')?.value||'carbon',wallColor:(document.getElementById('wallColorPro')?.value||'#071018').toUpperCase()}}
+function setAppearanceUI(a){a={...APPEAR_DEFAULT,...a};document.getElementById('neonPickerPro').value=a.neon;document.getElementById('neonHexPro').value=a.neon;document.getElementById('glowPro').value=a.glow;document.getElementById('glowValPro').textContent=a.glow+'%';document.getElementById('wallPro').value=a.wall;document.getElementById('wallColorPro').value=a.wallColor;applyAppearance(a)}
+function hexRGB(h){h=(h||'#00F5FF').replace('#','');return h.length===6?parseInt(h.slice(0,2),16)+','+parseInt(h.slice(2,4),16)+','+parseInt(h.slice(4,6),16):'0,245,255'}
+function applyAppearance(a){
+ document.documentElement.style.setProperty('--neon',a.neon);document.documentElement.style.setProperty('--neon2',a.neon);
+ let bg=WALLS_PRO[a.wall]||WALLS_PRO.carbon;if(a.wall==='custom')bg=`linear-gradient(145deg,${a.wallColor},#05080c)`;
+ document.body.style.backgroundImage=bg;document.getElementById('wallPreviewPro').style.backgroundImage=bg;
+ let st=document.getElementById('dynamic-neon-v3');if(!st){st=document.createElement('style');st.id='dynamic-neon-v3';document.head.appendChild(st)}
+ const g=Math.max(0,Math.min(100,Number(a.glow)||70))/100,rgb=hexRGB(a.neon);
+ st.textContent=`.card,.hero,.quick-status,.window-card{box-shadow:0 0 ${Math.round(10+26*g)}px rgba(${rgb},${(.08+.18*g).toFixed(2)}}.btn:hover,.nav-item.active{box-shadow:0 0 ${Math.round(8+18*g)}px rgba(${rgb},${(.15+.25*g).toFixed(2)}}`;
+}
+function setSyncBadge(t,k='warn'){const b=document.getElementById('espSyncBadge');if(b){b.textContent=t;b.className='sync-badge '+k}}
+async function saveAppearanceESP(){const a=appearanceFromUI();setAppearanceLocal(a);try{const r=await fetch('/set_config',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({appearance:a})});if(!r.ok)throw 0;setSyncBadge('ذخیره روی ESP32 ✓','ok')}catch(e){setSyncBadge('ذخیره محلی ✓','warn')}applyAppearance(a)}
+async function loadAppearanceESP(){try{const r=await fetch('/get_config',{cache:'no-store'});if(!r.ok)throw 0;const d=await r.json(),a=d.appearance||d;setAppearanceLocal({...APPEAR_DEFAULT,...a});setAppearanceUI(a);setSyncBadge('متصل به ESP32 ✓','ok')}catch(e){setAppearanceUI(getAppearanceLocal());setSyncBadge('ESP32 API در دسترس نیست','warn')}}
+async function resetAppearanceESP(){const a={...APPEAR_DEFAULT};setAppearanceUI(a);setAppearanceLocal(a);try{const r=await fetch('/set_config',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({appearance:a})});if(!r.ok)throw 0;setSyncBadge('پیش‌فرض روی ESP32 ✓','ok')}catch(e){setSyncBadge('پیش‌فرض محلی ✓','warn')}}
+(function(){const a=getAppearanceLocal();setAppearanceUI(a);const p=document.getElementById('neonPickerPro'),h=document.getElementById('neonHexPro'),g=document.getElementById('glowPro'),w=document.getElementById('wallPro'),wc=document.getElementById('wallColorPro');
+p.oninput=()=>{h.value=p.value.toUpperCase();const a=appearanceFromUI();setAppearanceLocal(a);applyAppearance(a)};h.onchange=()=>{let v=h.value.trim();if(!/^#[0-9a-fA-F]{6}$/.test(v))v='#00F5FF';p.value=v;h.value=v.toUpperCase();const a=appearanceFromUI();setAppearanceLocal(a);applyAppearance(a)};
+g.oninput=()=>{document.getElementById('glowValPro').textContent=g.value+'%';const a=appearanceFromUI();setAppearanceLocal(a);applyAppearance(a)};w.onchange=()=>{const a=appearanceFromUI();setAppearanceLocal(a);applyAppearance(a)};wc.oninput=()=>{const a=appearanceFromUI();setAppearanceLocal(a);applyAppearance(a)}})();
+</script>
+
+</body>
+
+<!-- ESP32-S3 persistent appearance API:
+GET /get_config -> {"appearance":{"neon":"#00F5FF","glow":70,"wall":"carbon","wallColor":"#071018"}}
+POST /set_config with JSON {"appearance":{...}}
+Existing /cmd, /led, /get_sensors endpoints remain; /get_sensors only reports voltage, position and state.
+-->
+
+</html>
