@@ -35,6 +35,7 @@ overridden by the estimator.
 | **Hardware in** | 4–6 × TTP223 touch modules, INA219 (voltage/current) |
 | **Hardware out** | 4 × relays (2 windows × up/down) via 2N2222 + flyback diode |
 | **Code** | ~1560 lines of single-file Arduino C++ (`src/`) |
+| **Build** | CI-verified on GitHub Actions — RAM 17.8% (58 KB), Flash 88.8% (1.14 MB) |
 | **License** | MIT (see third-party note in `LICENSE`) |
 
 **Highlights**
@@ -131,6 +132,10 @@ pio run                 # کامپایل فریم‌ور
 pio run -t upload      # فلش روی برد
 pio device monitor     # لاگ سریال
 ```
+
+ساخت روی **GitHub Actions** بررسی می‌شود (نشان سبز بالای صفحه) و خروجی `firmware.bin` به‌صورت
+artifact در همان اجرا قابل دانلود است. وضعیت فعلی: **RAM ۱۷٫۸٪** (۵۸ کیلوبایت) و
+**Flash ۸۸٫۸٪** (۱٫۱۴ مگابایت).
 
 **Arduino IDE:** پوشهٔ `src/Car_Control_Pro_ESP32S3/` را باز کنید (نام پوشه باید با نام فایل
 `.ino` یکی باشد) و کتابخانه‌های `ElegantOTA`، `ArduinoJson` و `NimBLE-Arduino` را نصب کنید.
