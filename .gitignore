@@ -18,8 +18,7 @@ build/
 !.vscode/extensions.json
 !.vscode/settings.json
 !.vscode/tasks.json
-!.vscode/c_cpp_properties.json
-!.vscode/launch.json
+# c_cpp_properties.json / launch.json are auto-generated with absolute local paths
 
 # OS / editor
 Thumbs.db
